@@ -28,9 +28,13 @@ SOURCES += \
         main.cpp \
         doukmemed.cpp
 
+win32: SOURCES += lpa_windows.cpp
+else: SOURCES += lpa_unix.cpp
+
 HEADERS += \
         doukmemed.h \
-    doukutsu.h
+        doukutsu.h \
+        lpa.h
 
 FORMS += \
         doukmemed.ui
@@ -40,4 +44,4 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-LIBS += -lpsapi
+win32: LIBS += -lpsapi

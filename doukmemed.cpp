@@ -51,7 +51,7 @@ DoukMemEd::DoukMemEd(QWidget *parent) :
     for (int i = 0; i < CB_EQUIPS_COUNT; i++) {
         cbEquips[i]->setText(cbEquipText[i]);
         connect(cbEquips[i], &QCheckBox::clicked, [=](bool checked) {
-            setEquip(static_cast<uint32_t>(i), checked);
+            setEquip(static_cast<uint32_t>(i), &checked);
         });
     }
     // create lock update timer & connect
@@ -202,13 +202,18 @@ void DoukMemEd::updateLocks() {
     }
 }
 
-bool DoukMemEd::getEquip(uint32_t e) {
+bool DoukMemEd::getEquip(uint32_t e, bool* v) {
+    if (e > 15)
+        return false;
     uint16_t word;
     proc->readMemory(Doukutsu::Equips, &word, sizeof(uint16_t));
-    return (word & BIT(e)) != 0;
+    *v = (word & BIT(e)) != 0;
+    return true;
 }
 
-void DoukMemEd::setEquip(uint32_t e, bool v) {
+bool DoukMemEd::setEquip(uint32_t e, bool* v) {
+    if (e > 15)
+        return false;
     uint16_t word;
     proc->readMemory(Doukutsu::Equips, &word, sizeof(uint16_t));
     uint16_t mask = static_cast<uint16_t>(BIT(e));
@@ -217,16 +222,23 @@ void DoukMemEd::setEquip(uint32_t e, bool v) {
     else
         word ^= mask;
     proc->writeMemory(Doukutsu::Equips, &word, sizeof(uint16_t));
+    return true;
 }
 
-void DoukMemEd::getWeapon(uint32_t slot, Doukutsu::Weapon* wpn) {
-    uint32_t off = Doukutsu::WeaponsStart + sizeof(Doukutsu::Weapon) * static_cast<uint32_t>(slot);
-    proc->readMemory(off, wpn, sizeof(Doukutsu::Weapon));
+bool DoukMemEd::getWeapon(uint32_t e, Doukutsu::Weapon* w) {
+    if (e > 7)
+        return false;
+    uint32_t off = Doukutsu::WeaponsStart + sizeof(Doukutsu::Weapon) * static_cast<uint32_t>(e);
+    proc->readMemory(off, w, sizeof(Doukutsu::Weapon));
+    return true;
 }
 
-void DoukMemEd::setWeapon(uint32_t slot, Doukutsu::Weapon* wpn) {
-    uint32_t off = Doukutsu::WeaponsStart + sizeof(Doukutsu::Weapon) * static_cast<uint32_t>(slot);
-    proc->writeMemory(off, wpn, sizeof(Doukutsu::Weapon));
+bool DoukMemEd::setWeapon(uint32_t e, Doukutsu::Weapon* w) {
+    if (e > 7)
+        return false;
+    uint32_t off = Doukutsu::WeaponsStart + sizeof(Doukutsu::Weapon) * static_cast<uint32_t>(e);
+    proc->writeMemory(off, w, sizeof(Doukutsu::Weapon));
+    return true;
 }
 
 void DoukMemEd::on_btnReadMem_clicked()
@@ -238,9 +250,11 @@ void DoukMemEd::on_btnReadMem_clicked()
     ui->sbMaxHP->setValue(word);
     proc->readMemory(Doukutsu::HealthCurrent, &word, sizeof(uint16_t));
     ui->sbCurHP->setValue(word);
-    proc->readMemory(Doukutsu::Equips, &word, sizeof(uint16_t));
-    for (int i = 0; i < CB_EQUIPS_COUNT; i++)
-        cbEquips[i]->setChecked((word & BIT(i)) != 0);
+    bool b = false;
+    for (int i = 0; i < CB_EQUIPS_COUNT; i++) {
+        getEquip(static_cast<uint32_t>(i), &b);
+        cbEquips[i]->setChecked(b);
+    }
     Doukutsu::Weapon w;
     getWeapon(0, &w);
     ui->sbWepID->setValue(static_cast<int>(w.id));

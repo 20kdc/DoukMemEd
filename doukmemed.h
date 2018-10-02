@@ -41,10 +41,10 @@ private:
     bool checkProcStillRunning();
     void disableLocks();
     void setWidgetsDisabled(bool v);
-    bool getEquip(uint32_t e);
-    void setEquip(uint32_t e, bool v);
-    void getWeapon(uint32_t slot, Doukutsu::Weapon* wpn);
-    void setWeapon(uint32_t slot, Doukutsu::Weapon* wpn);
+    bool getEquip(uint32_t e, bool* v);
+    bool setEquip(uint32_t e, bool* v);
+    bool getWeapon(uint32_t e, Doukutsu::Weapon* w);
+    bool setWeapon(uint32_t e, Doukutsu::Weapon* w);
     QTimer *lockUpdateTimer;
     QCheckBox *cbEquips[CB_EQUIPS_COUNT];
 };

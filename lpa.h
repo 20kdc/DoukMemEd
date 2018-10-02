@@ -1,6 +1,5 @@
 // Loaded Process Access (LPA)
-#ifndef LPA_H
-#define LPA_H
+#pragma once
 
 #include <QList>
 #include <stdint.h>
@@ -34,5 +33,3 @@ namespace LPA {
     bool getProcesses(QList<intptr_t> & processes);
     unsigned int getLastError();
 }
-
-#endif // LPA_H

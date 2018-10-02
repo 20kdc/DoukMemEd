@@ -1,9 +1,11 @@
-#ifndef DOUKMEMED_H
-#define DOUKMEMED_H
+#pragma once
 
 #include <QMainWindow>
 #include <QTimer>
+#include <QCheckBox>
 #include "lpa.h"
+
+#define CB_EQUIPS_COUNT 16
 
 namespace Ui {
 class DoukMemEd;
@@ -22,9 +24,8 @@ private slots:
     void on_btnReadMem_clicked();
     void on_sbMaxHP_valueChanged(int arg1);
     void on_sbCurHP_valueChanged(int arg1);
-    void updateLocks();
-
     void on_cbLockHP_clicked(bool checked);
+    void updateLocks();
 
 private:
     Ui::DoukMemEd *ui;
@@ -32,7 +33,8 @@ private:
     void detach();
     bool checkProcStillRunning();
     void setWidgetsDisabled(bool v);
+    bool getEquip(int e);
+    void setEquip(int e, bool v);
     QTimer *lockUpdateTimer;
+    QCheckBox *cbEquips[CB_EQUIPS_COUNT];
 };
-
-#endif // DOUKMEMED_H

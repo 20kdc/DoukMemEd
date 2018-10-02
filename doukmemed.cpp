@@ -5,6 +5,7 @@
 #include <string>
 #include <sstream>
 #include <stdint.h>
+#include <QTextStream>
 #include "doukutsu.h"
 using namespace std;
 
@@ -12,13 +13,55 @@ DoukMemEd::DoukMemEd(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::DoukMemEd)
 {
+    // set up equip checkbox text
+    QString cbEquipText[CB_EQUIPS_COUNT];
+    for (int i = 0; i < CB_EQUIPS_COUNT; i++)
+        cbEquipText[i] = QString("Equip %1").arg(i + 1);
+    // read from equips.txt
+    QFile equips("equips.txt");
+    if (equips.open(QFile::ReadOnly)) {
+        QTextStream in(&equips);
+        for (int i = 0; i < CB_EQUIPS_COUNT; i++) {
+            if (in.atEnd())
+                break;
+            cbEquipText[i] = in.readLine();
+        }
+        equips.close();
+    }
+    // call setupUi
     ui->setupUi(this);
+    // put equip chechboxes into array
+    cbEquips[0] = ui->cbEquip01;
+    cbEquips[1] = ui->cbEquip02;
+    cbEquips[2] = ui->cbEquip03;
+    cbEquips[3] = ui->cbEquip04;
+    cbEquips[4] = ui->cbEquip05;
+    cbEquips[5] = ui->cbEquip06;
+    cbEquips[6] = ui->cbEquip07;
+    cbEquips[7] = ui->cbEquip08;
+    cbEquips[8] = ui->cbEquip09;
+    cbEquips[9] = ui->cbEquip10;
+    cbEquips[10] = ui->cbEquip11;
+    cbEquips[11] = ui->cbEquip12;
+    cbEquips[12] = ui->cbEquip13;
+    cbEquips[13] = ui->cbEquip14;
+    cbEquips[14] = ui->cbEquip15;
+    cbEquips[15] = ui->cbEquip16;
+    // connect equip checkboxes & set text
+    for (int i = 0; i < CB_EQUIPS_COUNT; i++) {
+        cbEquips[i]->setText(cbEquipText[i]);
+        connect(cbEquips[i], &QCheckBox::clicked, [=](bool checked) {
+            setEquip(i, checked);
+        });
+    }
+    // create lock update timer & connect
     lockUpdateTimer = new QTimer(this);
     connect(lockUpdateTimer, SIGNAL(timeout()), this, SLOT(updateLocks()));
 }
 
 DoukMemEd::~DoukMemEd()
 {
+    detach();
     delete ui;
 }
 
@@ -104,6 +147,8 @@ void DoukMemEd::setWidgetsDisabled(bool v) {
     ui->sbMaxHP->setDisabled(v);
     ui->sbCurHP->setDisabled(v);
     ui->cbLockHP->setDisabled(v);
+    for (int i = 0; i < CB_EQUIPS_COUNT; i++)
+        cbEquips[i]->setDisabled(v);
 }
 
 bool DoukMemEd::checkProcStillRunning() {
@@ -121,13 +166,26 @@ void DoukMemEd::updateLocks() {
         return;
     if (ui->cbLockHP->isChecked()) {
         uint16_t word = static_cast<uint16_t>(ui->sbCurHP->value());
-        // max health also has to be set to this value
-        // (max HP spinbox is disabled by lock checkbox being toggled on)
-        ui->sbMaxHP->setValue(word);
-        proc->writeMemory(CS_health_maximum, &word, sizeof(uint16_t));
         proc->writeMemory(CS_health_displayed, &word, sizeof(uint16_t));
         proc->writeMemory(CS_health_current, &word, sizeof(uint16_t));
     }
+}
+
+bool DoukMemEd::getEquip(int e) {
+    uint16_t word;
+    proc->readMemory(CS_equips, &word, sizeof(uint16_t));
+    return (word & BIT(e)) != 0;
+}
+
+void DoukMemEd::setEquip(int e, bool v) {
+    uint16_t word;
+    proc->readMemory(CS_equips, &word, sizeof(uint16_t));
+    uint16_t mask = static_cast<uint16_t>(BIT(e));
+    if (v)
+        word |= mask;
+    else
+        word ^= mask;
+    proc->writeMemory(CS_equips, &word, sizeof(uint16_t));
 }
 
 void DoukMemEd::on_btnReadMem_clicked()
@@ -139,6 +197,9 @@ void DoukMemEd::on_btnReadMem_clicked()
     ui->sbMaxHP->setValue(word);
     proc->readMemory(CS_health_current, &word, sizeof(uint16_t));
     ui->sbCurHP->setValue(word);
+    proc->readMemory(CS_equips, &word, sizeof(uint16_t));
+    for (int i = 0; i < CB_EQUIPS_COUNT; i++)
+        cbEquips[i]->setChecked((word & BIT(i)) != 0);
 }
 
 void DoukMemEd::on_sbMaxHP_valueChanged(int arg1)
@@ -156,11 +217,17 @@ void DoukMemEd::on_sbCurHP_valueChanged(int arg1)
     uint16_t val = static_cast<uint16_t>(arg1);
     proc->writeMemory(CS_health_current, &val, sizeof(uint16_t));
     proc->writeMemory(CS_health_displayed, &val, sizeof(uint16_t));
-    if (ui->cbLockHP->isChecked())
-        proc->writeMemory(CS_health_maximum, &val, sizeof(uint16_t));
+    if (ui->cbLockHP->isChecked()) {
+        ui->sbMaxHP->setValue(arg1);
+    }
 }
 
 void DoukMemEd::on_cbLockHP_clicked(bool checked)
 {
+    if (!checked) {
+        ui->sbMaxHP->setEnabled(true);
+        return;
+    }
     ui->sbMaxHP->setEnabled(!checked);
+    ui->sbMaxHP->setValue(ui->sbCurHP->value());
 }

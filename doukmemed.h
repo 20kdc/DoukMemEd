@@ -27,12 +27,9 @@ private slots:
     void on_sbCurHP_valueChanged(int arg1);
     void on_cbLockHP_clicked(bool checked);
     void updateLocks();
-
     void on_cbInfBoost_clicked(bool checked);
-
-    void on_sbWepID_valueChanged(int arg1);
-
     void on_cbInfAmmo_clicked(bool checked);
+    void on_leExeName_returnPressed();
 
 private:
     Ui::DoukMemEd *ui;

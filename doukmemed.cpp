@@ -166,7 +166,6 @@ void DoukMemEd::setWidgetsDisabled(bool v) {
     ui->cbLockHP->setDisabled(v);
     for (int i = 0; i < CB_EQUIPS_COUNT; i++)
         cbEquips[i]->setDisabled(v);
-    ui->sbWepID->setDisabled(v);
     ui->cbInfBoost->setDisabled(v);
     ui->cbInfAmmo->setDisabled(v);
 }
@@ -255,9 +254,6 @@ void DoukMemEd::on_btnReadMem_clicked()
         getEquip(static_cast<uint32_t>(i), &b);
         cbEquips[i]->setChecked(b);
     }
-    Doukutsu::Weapon w;
-    getWeapon(0, &w);
-    ui->sbWepID->setValue(static_cast<int>(w.id));
 }
 
 void DoukMemEd::on_sbMaxHP_valueChanged(int arg1)
@@ -296,16 +292,13 @@ void DoukMemEd::on_cbInfBoost_clicked(bool checked)
         updateLocks();
 }
 
-void DoukMemEd::on_sbWepID_valueChanged(int arg1)
-{
-    Doukutsu::Weapon w;
-    getWeapon(0, &w);
-    w.id = static_cast<uint32_t>(arg1);
-    setWeapon(0, &w);
-}
-
 void DoukMemEd::on_cbInfAmmo_clicked(bool checked)
 {
     if (checked)
         updateLocks();
+}
+
+void DoukMemEd::on_leExeName_returnPressed()
+{
+    on_btnAttach_clicked();
 }

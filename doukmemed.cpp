@@ -117,6 +117,7 @@ void DoukMemEd::on_btnAttach_clicked()
         }
 
         cout << "Successfully attached to Cave Story process (PID: " << proc->getPID() << ")." << endl;
+        disableLocks();
         lockUpdateTimer->start(100); // locks are updated every 1/10th of a second
         ui->leExeName->setDisabled(true);
         ui->btnAttach->setText(QString("Detach"));
@@ -141,14 +142,19 @@ void DoukMemEd::detach() {
     setWidgetsDisabled(true);
 }
 
+void DoukMemEd::disableLocks() {
+    ui->cbLockHP->setChecked(false);
+    ui->cbInfBoost->setChecked(false);
+}
+
 void DoukMemEd::setWidgetsDisabled(bool v) {
-    if (v)
-        ui->cbLockHP->setChecked(false);
     ui->sbMaxHP->setDisabled(v);
     ui->sbCurHP->setDisabled(v);
     ui->cbLockHP->setDisabled(v);
     for (int i = 0; i < CB_EQUIPS_COUNT; i++)
         cbEquips[i]->setDisabled(v);
+    ui->sbWepID->setDisabled(v);
+    ui->cbInfBoost->setDisabled(v);
 }
 
 bool DoukMemEd::checkProcStillRunning() {
@@ -164,28 +170,41 @@ bool DoukMemEd::checkProcStillRunning() {
 void DoukMemEd::updateLocks() {
     if (!checkProcStillRunning())
         return;
+    uint32_t dword = 9999;
     if (ui->cbLockHP->isChecked()) {
         uint16_t word = static_cast<uint16_t>(ui->sbCurHP->value());
-        proc->writeMemory(CS_health_displayed, &word, sizeof(uint16_t));
-        proc->writeMemory(CS_health_current, &word, sizeof(uint16_t));
+        proc->writeMemory(Doukutsu::HealthDisplayed, &word, sizeof(uint16_t));
+        proc->writeMemory(Doukutsu::HealthCurrent, &word, sizeof(uint16_t));
     }
+    if (ui->cbInfBoost->isChecked())
+        proc->writeMemory(Doukutsu::BoosterFuel, &dword, sizeof(uint32_t));
 }
 
 bool DoukMemEd::getEquip(int e) {
     uint16_t word;
-    proc->readMemory(CS_equips, &word, sizeof(uint16_t));
+    proc->readMemory(Doukutsu::Equips, &word, sizeof(uint16_t));
     return (word & BIT(e)) != 0;
 }
 
 void DoukMemEd::setEquip(int e, bool v) {
     uint16_t word;
-    proc->readMemory(CS_equips, &word, sizeof(uint16_t));
+    proc->readMemory(Doukutsu::Equips, &word, sizeof(uint16_t));
     uint16_t mask = static_cast<uint16_t>(BIT(e));
     if (v)
         word |= mask;
     else
         word ^= mask;
-    proc->writeMemory(CS_equips, &word, sizeof(uint16_t));
+    proc->writeMemory(Doukutsu::Equips, &word, sizeof(uint16_t));
+}
+
+void DoukMemEd::getWeapon(Doukutsu::Weapon* wpn, int slot) {
+    uint32_t off = Doukutsu::WeaponsStart + sizeof(Doukutsu::Weapon) * static_cast<uint32_t>(slot);
+    proc->readMemory(off, wpn, sizeof(Doukutsu::Weapon));
+}
+
+void DoukMemEd::setWeapon(Doukutsu::Weapon* wpn, int slot) {
+    uint32_t off = Doukutsu::WeaponsStart + sizeof(Doukutsu::Weapon) * static_cast<uint32_t>(slot);
+    proc->writeMemory(off, wpn, sizeof(Doukutsu::Weapon));
 }
 
 void DoukMemEd::on_btnReadMem_clicked()
@@ -193,13 +212,16 @@ void DoukMemEd::on_btnReadMem_clicked()
     if (!checkProcStillRunning())
         return;
     uint16_t word;
-    proc->readMemory(CS_health_maximum, &word, sizeof(uint16_t));
+    proc->readMemory(Doukutsu::HealthMaximum, &word, sizeof(uint16_t));
     ui->sbMaxHP->setValue(word);
-    proc->readMemory(CS_health_current, &word, sizeof(uint16_t));
+    proc->readMemory(Doukutsu::HealthCurrent, &word, sizeof(uint16_t));
     ui->sbCurHP->setValue(word);
-    proc->readMemory(CS_equips, &word, sizeof(uint16_t));
+    proc->readMemory(Doukutsu::Equips, &word, sizeof(uint16_t));
     for (int i = 0; i < CB_EQUIPS_COUNT; i++)
         cbEquips[i]->setChecked((word & BIT(i)) != 0);
+    Doukutsu::Weapon w;
+    getWeapon(&w, 0);
+    ui->sbWepID->setValue(static_cast<int>(w.id));
 }
 
 void DoukMemEd::on_sbMaxHP_valueChanged(int arg1)
@@ -207,7 +229,7 @@ void DoukMemEd::on_sbMaxHP_valueChanged(int arg1)
     if (!checkProcStillRunning())
         return;
     uint16_t val = static_cast<uint16_t>(arg1);
-    proc->writeMemory(CS_health_maximum, &val, sizeof(uint16_t));
+    proc->writeMemory(Doukutsu::HealthMaximum, &val, sizeof(uint16_t));
 }
 
 void DoukMemEd::on_sbCurHP_valueChanged(int arg1)
@@ -215,8 +237,8 @@ void DoukMemEd::on_sbCurHP_valueChanged(int arg1)
     if (!checkProcStillRunning())
         return;
     uint16_t val = static_cast<uint16_t>(arg1);
-    proc->writeMemory(CS_health_current, &val, sizeof(uint16_t));
-    proc->writeMemory(CS_health_displayed, &val, sizeof(uint16_t));
+    proc->writeMemory(Doukutsu::HealthCurrent, &val, sizeof(uint16_t));
+    proc->writeMemory(Doukutsu::HealthDisplayed, &val, sizeof(uint16_t));
     if (ui->cbLockHP->isChecked()) {
         ui->sbMaxHP->setValue(arg1);
     }
@@ -230,4 +252,20 @@ void DoukMemEd::on_cbLockHP_clicked(bool checked)
     }
     ui->sbMaxHP->setEnabled(!checked);
     ui->sbMaxHP->setValue(ui->sbCurHP->value());
+}
+
+void DoukMemEd::on_cbInfBoost_clicked(bool checked)
+{
+    if (checked) {
+        uint32_t dword = 9999;
+        proc->writeMemory(Doukutsu::BoosterFuel, &dword, sizeof(uint32_t));
+    }
+}
+
+void DoukMemEd::on_sbWepID_valueChanged(int arg1)
+{
+    Doukutsu::Weapon w;
+    getWeapon(&w, 0);
+    w.id = static_cast<uint32_t>(arg1);
+    setWeapon(&w, 0);
 }

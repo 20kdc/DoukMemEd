@@ -2,8 +2,8 @@
 #define DOUKMEMED_H
 
 #include <QMainWindow>
-#include "windows.h"
 #include <QTimer>
+#include "lpa.h"
 
 namespace Ui {
 class DoukMemEd;
@@ -28,7 +28,7 @@ private slots:
 
 private:
     Ui::DoukMemEd *ui;
-    HANDLE proc = nullptr;
+    LPA::Process *proc = nullptr;
     void detach();
     bool checkProcStillRunning();
     void setWidgetsDisabled(bool v);

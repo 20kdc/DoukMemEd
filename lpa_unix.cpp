@@ -30,16 +30,16 @@ LPA::Process::Process(intptr_t pidx) {
 
 LPA::Process::~Process() {
     if (valid) {
-        close((int) handle);
+        close(static_cast<int>(handle));
         if (handle2 >= 0)
-            close((int) handle2);
+            close(static_cast<int>(handle2));
     }
 }
 
 bool LPA::Process::isStillAlive() {
     // Attempting to do anything on a dead process will result in error.
     // Thus, if we could access the process status before, and we no longer can, it's dead.
-    int fd = openat((int) handle, "status", O_RDONLY);
+    int fd = openat(static_cast<int>(handle), "status", O_RDONLY);
     if (fd < 0)
         return false;
     close(fd);
@@ -47,7 +47,7 @@ bool LPA::Process::isStillAlive() {
 }
 
 bool LPA::Process::matchesNameTemplate(QString post) {
-    int nm = openat((int) handle, "comm", O_RDONLY);
+    int nm = openat(static_cast<int>(handle), "comm", O_RDONLY);
     if (nm < 0)
         return false;
 
@@ -67,7 +67,7 @@ bool LPA::Process::matchesNameTemplate(QString post) {
 
 bool LPA::Process::canBeginMemoryAccess() {
     if (handle2 < 0)
-        handle2 = openat((int) handle, "mem", O_RDWR);
+        handle2 = openat(static_cast<int>(handle), "mem", O_RDWR);
     return handle2 >= 0;
 }
 
@@ -89,7 +89,7 @@ bool LPA::getProcesses(QList<intptr_t> & processes) {
     QDir qd("/proc");
     for (QString & qs : qd.entryList()) {
         bool ok = false;
-        intptr_t r = (intptr_t) qs.toLong(&ok);
+        intptr_t r = static_cast<intptr_t>(qs.toLong(&ok));
         if (ok)
             processes.append(r);
     }
@@ -97,5 +97,5 @@ bool LPA::getProcesses(QList<intptr_t> & processes) {
 }
 
 unsigned int LPA::getLastError() {
-    return (unsigned int) errno;
+    return static_cast<unsigned int>(errno);
 }

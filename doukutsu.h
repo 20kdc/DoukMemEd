@@ -17,16 +17,16 @@ namespace Doukutsu {
         uint32_t ammo;
     } Weapon;
 
-    /* NYI
     typedef struct {
-        // ???
-    } Warp;
-    */
+        uint32_t id;
+        uint32_t event;
+    } StagePermit;
     #pragma pack(pop)
 
     // MEMORY OFFSETS
     // from http://cave-story-modding.wikia.com/wiki/Noxid's_Assembly_Compendium
     enum Offsets : uint32_t {
+        VerifyExe = static_cast<uint32_t>(0x412429),
         WeaponsStart = static_cast<uint32_t>(0x499BC8),
         Equips = static_cast<uint32_t>(0x49E650),
         InvincTimer = static_cast<uint32_t>(0x49E6C8),
@@ -36,6 +36,7 @@ namespace Doukutsu {
         HealthDisplayed = static_cast<uint32_t>(0x49E6D4),
         Oxygen = static_cast<uint32_t>(0x49E6DC),
         BoosterFuel = static_cast<uint32_t>(0x49E6E8),
+        StagePermitsStart = static_cast<uint32_t>(0x4A54FC),
     };
 
 }

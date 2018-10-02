@@ -11,6 +11,8 @@
 #include <Windows.h>
 #include <Psapi.h>
 #include <WinBase.h>
+#include <iostream>
+using namespace std;
 
 LPA::Process::Process(intptr_t pidx) {
     pid = pidx;
@@ -39,7 +41,8 @@ bool LPA::Process::matchesNameTemplate(QString post) {
     // Must be kept in scope to ensure that the constData's conversion to an std::string occurs correctly.
     QByteArray qba = post.toUtf8();
     std::string doukutsu = qba.constData();
-    DWORD ns = GetModuleFileNameExA(reinterpret_cast<HANDLE>(handle), nullptr, name, 512);
+    DWORD ns = GetProcessImageFileNameA(reinterpret_cast<HANDLE>(handle), name, 512);
+    cout << "PID: " << pid << ", GetProcessImageFileNameA returns: " << name << endl;
     if (ns != 0) {
         char* nameStart = strrchr(name, '\\');
         if (nameStart) {

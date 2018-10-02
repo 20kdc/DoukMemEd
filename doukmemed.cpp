@@ -116,6 +116,18 @@ void DoukMemEd::on_btnAttach_clicked()
             return;
         }
 
+        cout << "Attached to process, PID: " << proc->getPID() << "." << endl;
+        uint8_t ver[5] = {0xA1, 0x20, 0x8B, 0x49, 0x00};
+        uint8_t dat[5];
+        proc->readMemory(Doukutsu::VerifyExe, dat, 5);
+        if (memcmp(dat, ver, 5)) {
+            QMessageBox::StandardButton btn = QMessageBox::warning(this, QString("Non-Cave Story process"), QString("Process does not seem to be of a Cave Story executable.\nAttach anyway?"),  QMessageBox::Yes | QMessageBox::No);
+            if (btn != QMessageBox::Yes) {
+                delete proc;
+                proc = nullptr;
+                return;
+            }
+        }
         cout << "Successfully attached to Cave Story process (PID: " << proc->getPID() << ")." << endl;
         disableLocks();
         lockUpdateTimer->start(100); // locks are updated every 1/10th of a second

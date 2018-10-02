@@ -32,6 +32,8 @@ private slots:
 
     void on_sbWepID_valueChanged(int arg1);
 
+    void on_cbInfAmmo_clicked(bool checked);
+
 private:
     Ui::DoukMemEd *ui;
     LPA::Process *proc = nullptr;
@@ -39,10 +41,10 @@ private:
     bool checkProcStillRunning();
     void disableLocks();
     void setWidgetsDisabled(bool v);
-    bool getEquip(int e);
-    void setEquip(int e, bool v);
-    void getWeapon(Doukutsu::Weapon* wpn, int slot);
-    void setWeapon(Doukutsu::Weapon* wpn, int slot);
+    bool getEquip(uint32_t e);
+    void setEquip(uint32_t e, bool v);
+    void getWeapon(uint32_t slot, Doukutsu::Weapon* wpn);
+    void setWeapon(uint32_t slot, Doukutsu::Weapon* wpn);
     QTimer *lockUpdateTimer;
     QCheckBox *cbEquips[CB_EQUIPS_COUNT];
 };

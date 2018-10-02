@@ -51,7 +51,7 @@ DoukMemEd::DoukMemEd(QWidget *parent) :
     for (int i = 0; i < CB_EQUIPS_COUNT; i++) {
         cbEquips[i]->setText(cbEquipText[i]);
         connect(cbEquips[i], &QCheckBox::clicked, [=](bool checked) {
-            setEquip(i, checked);
+            setEquip(static_cast<uint32_t>(i), checked);
         });
     }
     // create lock update timer & connect
@@ -157,6 +157,7 @@ void DoukMemEd::detach() {
 void DoukMemEd::disableLocks() {
     ui->cbLockHP->setChecked(false);
     ui->cbInfBoost->setChecked(false);
+    ui->cbInfAmmo->setChecked(false);
 }
 
 void DoukMemEd::setWidgetsDisabled(bool v) {
@@ -167,6 +168,7 @@ void DoukMemEd::setWidgetsDisabled(bool v) {
         cbEquips[i]->setDisabled(v);
     ui->sbWepID->setDisabled(v);
     ui->cbInfBoost->setDisabled(v);
+    ui->cbInfAmmo->setDisabled(v);
 }
 
 bool DoukMemEd::checkProcStillRunning() {
@@ -190,15 +192,23 @@ void DoukMemEd::updateLocks() {
     }
     if (ui->cbInfBoost->isChecked())
         proc->writeMemory(Doukutsu::BoosterFuel, &dword, sizeof(uint32_t));
+    if (ui->cbInfAmmo->isChecked()) {
+        uint32_t slot;
+        proc->readMemory(Doukutsu::CurWeaponSlot, &slot, sizeof(uint32_t));
+        Doukutsu::Weapon wpn;
+        getWeapon(slot, &wpn);
+        wpn.ammo = wpn.ammoMax;
+        setWeapon(slot, &wpn);
+    }
 }
 
-bool DoukMemEd::getEquip(int e) {
+bool DoukMemEd::getEquip(uint32_t e) {
     uint16_t word;
     proc->readMemory(Doukutsu::Equips, &word, sizeof(uint16_t));
     return (word & BIT(e)) != 0;
 }
 
-void DoukMemEd::setEquip(int e, bool v) {
+void DoukMemEd::setEquip(uint32_t e, bool v) {
     uint16_t word;
     proc->readMemory(Doukutsu::Equips, &word, sizeof(uint16_t));
     uint16_t mask = static_cast<uint16_t>(BIT(e));
@@ -209,12 +219,12 @@ void DoukMemEd::setEquip(int e, bool v) {
     proc->writeMemory(Doukutsu::Equips, &word, sizeof(uint16_t));
 }
 
-void DoukMemEd::getWeapon(Doukutsu::Weapon* wpn, int slot) {
+void DoukMemEd::getWeapon(uint32_t slot, Doukutsu::Weapon* wpn) {
     uint32_t off = Doukutsu::WeaponsStart + sizeof(Doukutsu::Weapon) * static_cast<uint32_t>(slot);
     proc->readMemory(off, wpn, sizeof(Doukutsu::Weapon));
 }
 
-void DoukMemEd::setWeapon(Doukutsu::Weapon* wpn, int slot) {
+void DoukMemEd::setWeapon(uint32_t slot, Doukutsu::Weapon* wpn) {
     uint32_t off = Doukutsu::WeaponsStart + sizeof(Doukutsu::Weapon) * static_cast<uint32_t>(slot);
     proc->writeMemory(off, wpn, sizeof(Doukutsu::Weapon));
 }
@@ -232,7 +242,7 @@ void DoukMemEd::on_btnReadMem_clicked()
     for (int i = 0; i < CB_EQUIPS_COUNT; i++)
         cbEquips[i]->setChecked((word & BIT(i)) != 0);
     Doukutsu::Weapon w;
-    getWeapon(&w, 0);
+    getWeapon(0, &w);
     ui->sbWepID->setValue(static_cast<int>(w.id));
 }
 
@@ -268,16 +278,20 @@ void DoukMemEd::on_cbLockHP_clicked(bool checked)
 
 void DoukMemEd::on_cbInfBoost_clicked(bool checked)
 {
-    if (checked) {
-        uint32_t dword = 9999;
-        proc->writeMemory(Doukutsu::BoosterFuel, &dword, sizeof(uint32_t));
-    }
+    if (checked)
+        updateLocks();
 }
 
 void DoukMemEd::on_sbWepID_valueChanged(int arg1)
 {
     Doukutsu::Weapon w;
-    getWeapon(&w, 0);
+    getWeapon(0, &w);
     w.id = static_cast<uint32_t>(arg1);
-    setWeapon(&w, 0);
+    setWeapon(0, &w);
+}
+
+void DoukMemEd::on_cbInfAmmo_clicked(bool checked)
+{
+    if (checked)
+        updateLocks();
 }

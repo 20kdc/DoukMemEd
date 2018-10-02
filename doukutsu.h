@@ -10,7 +10,6 @@ namespace Doukutsu {
     #pragma pack(push, 1)
     typedef struct {
         uint32_t id;
-        uint32_t shotID; // type of bullet fired
         uint32_t level;
         uint32_t energy;
         uint32_t ammoMax;
@@ -28,6 +27,7 @@ namespace Doukutsu {
     enum Offsets : uint32_t {
         VerifyExe = static_cast<uint32_t>(0x412429),
         WeaponsStart = static_cast<uint32_t>(0x499BC8),
+        CurWeaponSlot = static_cast<uint32_t>(0x499C68),
         Equips = static_cast<uint32_t>(0x49E650),
         InvincTimer = static_cast<uint32_t>(0x49E6C8),
         HealthCurrent = static_cast<uint32_t>(0x49E6CC),

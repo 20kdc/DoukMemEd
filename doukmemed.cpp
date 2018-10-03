@@ -67,7 +67,7 @@ DoukMemEd::~DoukMemEd()
 
 void DoukMemEd::on_btnAttach_clicked()
 {
-    if (proc == nullptr) {
+    if (!proc) {
         // correct EXE name string, if needed
         QString exeName = ui->leExeName->text();
         if (!exeName.endsWith(".exe")) {
@@ -111,8 +111,12 @@ void DoukMemEd::on_btnAttach_clicked()
             proc = nullptr;
         }
 
-        if (proc == nullptr) {
-            QMessageBox::critical(this, QString("Attach fail"), QString("Could not find Cave Story process.\nMake sure Cave Story is running, and that its name is %1.").arg(ui->leExeName->text()));
+        if (!proc) {
+            QMessageBox::critical(this, QString("Attach fail"), QString(
+                "Could not find Cave Story process.\n"
+                "Make sure Cave Story is running, and that its name is %1.\n"
+                "If it is running, it might be elevated. Run Doukutsu Memory Editor as an Administrator and try again."
+            ).arg(ui->leExeName->text()));
             return;
         }
 
@@ -142,7 +146,7 @@ void DoukMemEd::on_btnAttach_clicked()
 }
 
 void DoukMemEd::detach() {
-    if (proc != nullptr)
+    if (proc)
         delete proc;
     proc = nullptr;
     cout << "Detached from Cave Story process.\r\n";
@@ -171,7 +175,7 @@ void DoukMemEd::setWidgetsDisabled(bool v) {
 }
 
 bool DoukMemEd::checkProcStillRunning() {
-    if (proc == nullptr)
+    if (!proc)
         return false;
     if (proc->isStillAlive())
         return true;

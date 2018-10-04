@@ -26,7 +26,9 @@ CONFIG += c++11
 
 SOURCES += \
         main.cpp \
-        doukmemed.cpp
+        doukmemed.cpp \
+    hkapplication.cpp \
+    hkeventfilter.cpp
 
 win32: SOURCES += lpa_windows.cpp
 else: SOURCES += lpa_unix.cpp
@@ -34,7 +36,9 @@ else: SOURCES += lpa_unix.cpp
 HEADERS += \
         doukmemed.h \
         doukutsu.h \
-        lpa.h
+        lpa.h \
+    hkapplication.h \
+    hkeventfilter.h
 
 FORMS += \
         doukmemed.ui

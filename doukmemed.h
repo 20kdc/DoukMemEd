@@ -30,6 +30,7 @@ private slots:
     void on_cbInfBoost_clicked(bool checked);
     void on_cbInfAmmo_clicked(bool checked);
     void on_leExeName_returnPressed();
+    void onHotkey(int k, bool v, Qt::KeyboardModifiers m);
 
 private:
     Ui::DoukMemEd *ui;

@@ -7,6 +7,7 @@
 #include <stdint.h>
 #include <QTextStream>
 #include "doukutsu.h"
+#include "hkapplication.h"
 using namespace std;
 
 DoukMemEd::DoukMemEd(QWidget *parent) :
@@ -57,6 +58,16 @@ DoukMemEd::DoukMemEd(QWidget *parent) :
     // create lock update timer & connect
     lockUpdateTimer = new QTimer(this);
     connect(lockUpdateTimer, SIGNAL(timeout()), this, SLOT(updateLocks()));
+    // register hotkeys & connect hotkey callback
+    HKApplication* hkApp = static_cast<HKApplication*>(qApp);
+    if (hkApp != nullptr) {
+        hkApp->registerHotkey(Qt::Key_Up);
+        hkApp->registerHotkey(Qt::Key_Down);
+        hkApp->registerHotkey(Qt::Key_Left);
+        hkApp->registerHotkey(Qt::Key_Right);
+        connect(hkApp, SIGNAL(hotkey(int, bool, Qt::KeyboardModifiers)), this, SLOT(onHotkey(int, bool, Qt::KeyboardModifiers)));
+    } else
+        cout << "qApp is not instance of HKApplication, hotkey functionality disabled";
 }
 
 DoukMemEd::~DoukMemEd()
@@ -203,6 +214,30 @@ void DoukMemEd::updateLocks() {
         wpn.ammo = wpn.ammoMax;
         setWeapon(slot, &wpn);
     }
+}
+
+void DoukMemEd::onHotkey(int k, bool v, Qt::KeyboardModifiers m) {
+    if (!(m & Qt::KeypadModifier))
+        return;
+    string s2 = v ? "pressed" : "released";
+    string s1 = "<unknown>";
+    switch (k) {
+    case Qt::Key_Up:
+        s1 = "Up";
+        break;
+    case Qt::Key_Down:
+        s1 = "Down";
+        break;
+    case Qt::Key_Left:
+        s1 = "Left";
+        break;
+    case Qt::Key_Right:
+        s1 = "Right";
+        break;
+    default:
+        break;
+    }
+    cout << "Key " << s1 << " " << s2 << " on the keypad" << endl;
 }
 
 bool DoukMemEd::getEquip(uint32_t e, bool* v) {

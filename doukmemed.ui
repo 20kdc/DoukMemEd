@@ -245,20 +245,7 @@
      </item>
     </layout>
    </widget>
-   <widget class="QCheckBox" name="checkBox">
-    <property name="geometry">
-     <rect>
-      <x>-210</x>
-      <y>290</y>
-      <width>70</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>CheckBox</string>
-    </property>
-   </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>250</x>
@@ -300,7 +287,7 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -376,5 +363,22 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>leExeName</sender>
+   <signal>returnPressed()</signal>
+   <receiver>btnAttach</receiver>
+   <slot>animateClick()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>172</x>
+     <y>18</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>332</x>
+     <y>23</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

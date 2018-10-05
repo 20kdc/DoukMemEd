@@ -26,9 +26,12 @@ namespace Doukutsu {
     // from http://cave-story-modding.wikia.com/wiki/Noxid's_Assembly_Compendium
     enum Offsets : uint32_t {
         VerifyExe = static_cast<uint32_t>(0x412429),
+        InventoryStart = static_cast<uint32_t>(0x499B40),
         WeaponsStart = static_cast<uint32_t>(0x499BC8),
         CurWeaponSlot = static_cast<uint32_t>(0x499C68),
         Equips = static_cast<uint32_t>(0x49E650),
+        PlayerX = static_cast<uint32_t>(0x49E654),
+        PlayerY = static_cast<uint32_t>(0x49E658),
         InvincTimer = static_cast<uint32_t>(0x49E6C8),
         HealthCurrent = static_cast<uint32_t>(0x49E6CC),
         WhimStarNum = static_cast<uint32_t>(0x49E6CE),

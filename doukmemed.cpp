@@ -56,7 +56,7 @@ DoukMemEd::DoukMemEd(QWidget *parent) :
     }
     // create lock update timer & connect
     lockUpdateTimer = new QTimer(this);
-    connect(lockUpdateTimer, SIGNAL(timeout()), this, SLOT(updateLocks()));
+    connect(lockUpdateTimer, &QTimer::timeout, this, &DoukMemEd::updateLocks);
 }
 
 DoukMemEd::~DoukMemEd()
@@ -70,8 +70,19 @@ void DoukMemEd::on_btnAttach_clicked()
     if (!proc) {
         // correct EXE name string, if needed
         QString exeName = ui->leExeName->text();
-        if (!exeName.endsWith(".exe")) {
-            exeName += ".exe";
+        QString exeExt = ".exe";
+        if (!exeName.endsWith(exeExt)) {
+            int dotIndex = exeName.lastIndexOf('.');
+            if (dotIndex == -1)
+                exeName += exeExt;
+            else {
+                QString sub = exeName.mid(dotIndex, exeName.length() - dotIndex);
+                if (exeExt.startsWith(sub)) {
+                    int sLen = sub.length();
+                    exeName += exeExt.mid(sLen, exeName.length() - sLen);
+                } else
+                    exeName += exeExt;
+            }
             ui->leExeName->setText(exeName);
         }
         // attach
@@ -90,12 +101,12 @@ void DoukMemEd::on_btnAttach_clicked()
                     delete proc;
                     QMessageBox::critical(this, QString("Attach fail"), QString(
                         "The Cave Story process was found, but access to memory was not available.\n"
-#ifdef WINDOWS
+#ifdef Q_OS_WIN
                         "It is possible that the wrong target was chosen, or the target was run as Administrator or another user and this program wasn't.\n"
 #else
                         "It is possible that the wrong target was chosen, or the target was run as another user.\n"
 #endif
-#ifdef __linux__
+#ifdef Q_OS_LINUX
                         // Canonical, may I ask how YAMA is added security? If something can go ptracing arbitrary targets, it can just as well read the data off disk.
                         "On certain Linux kernel builds, /proc/sys/kernel/yama/ptrace_scope must be set to 0 to allow ptrace between user processes.\n"
                         "This will apply until the next reboot.\n"
@@ -244,6 +255,21 @@ bool DoukMemEd::setWeapon(uint32_t e, Doukutsu::Weapon* w) {
     return true;
 }
 
+void DoukMemEd::movePlayer(int xm, int ym) {
+    int x;
+    if (xm != 0) {
+        proc->readMemory(Doukutsu::PlayerX, &x, sizeof(int));
+        x += xm * 256;
+        proc->writeMemory(Doukutsu::PlayerX, &x, sizeof(int));
+    }
+    int y;
+    if (ym != 0) {
+        proc->readMemory(Doukutsu::PlayerY, &y, sizeof(int));
+        y += ym * 256;
+        proc->writeMemory(Doukutsu::PlayerY, &y, sizeof(int));
+    }
+}
+
 void DoukMemEd::on_btnReadMem_clicked()
 {
     if (!checkProcStillRunning())
@@ -300,9 +326,4 @@ void DoukMemEd::on_cbInfAmmo_clicked(bool checked)
 {
     if (checked)
         updateLocks();
-}
-
-void DoukMemEd::on_leExeName_returnPressed()
-{
-    on_btnAttach_clicked();
 }

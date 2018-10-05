@@ -29,7 +29,6 @@ private slots:
     void updateLocks();
     void on_cbInfBoost_clicked(bool checked);
     void on_cbInfAmmo_clicked(bool checked);
-    void on_leExeName_returnPressed();
 
 private:
     Ui::DoukMemEd *ui;
@@ -42,6 +41,7 @@ private:
     bool setEquip(uint32_t e, bool* v);
     bool getWeapon(uint32_t e, Doukutsu::Weapon* w);
     bool setWeapon(uint32_t e, Doukutsu::Weapon* w);
+    void movePlayer(int xm, int ym);
     QTimer *lockUpdateTimer;
     QCheckBox *cbEquips[CB_EQUIPS_COUNT];
 };

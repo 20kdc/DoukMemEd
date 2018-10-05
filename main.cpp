@@ -1,11 +1,9 @@
-#include "hkapplication.h"
-#include "hkeventfilter.h"
+#include <QApplication>
 #include "doukmemed.h"
 
 int main(int argc, char *argv[])
 {
-    HKApplication a(argc, argv);
-    a.installEventFilter(new HKEventFilter(a.instance()));
+    QApplication a(argc, argv);
 
     DoukMemEd w;
     w.show();

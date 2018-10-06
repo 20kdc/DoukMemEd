@@ -23,12 +23,19 @@ public:
 private slots:
     void on_btnAttach_clicked();
     void on_btnReadMem_clicked();
+    void on_btnShowMap_clicked();
     void on_sbMaxHP_valueChanged(int arg1);
     void on_sbCurHP_valueChanged(int arg1);
     void on_cbLockHP_clicked(bool checked);
     void updateLocks();
     void on_cbInfBoost_clicked(bool checked);
     void on_cbInfAmmo_clicked(bool checked);
+
+signals:
+    // Attached to the lockUpdateTimer.
+    void timerRefresh();
+    // This is emitted immediately before proc is deleted to get things that have proc references to close themselves.
+    void detached();
 
 private:
     Ui::DoukMemEd *ui;

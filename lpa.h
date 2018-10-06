@@ -5,10 +5,11 @@
 #include <stdint.h>
 
 namespace LPA {
-    class Process
+    class Process : public QObject
     {
+        Q_OBJECT
     public:
-        Process(intptr_t pid);
+        Process(QObject * parent, intptr_t pid);
         inline bool isValid() {
             return valid;
         }

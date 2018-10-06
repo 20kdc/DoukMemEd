@@ -15,7 +15,7 @@
 // handle is used for access to the process directory (done separately to somewhat minimize race condition stuff).
 // handle2 is basically a bool used to indicate if we've taken over ptrace or not.
 
-LPA::Process::Process(intptr_t pidx) {
+LPA::Process::Process(QObject * parent, intptr_t pidx) : QObject(parent) {
     pid = pidx;
     valid = true;
 

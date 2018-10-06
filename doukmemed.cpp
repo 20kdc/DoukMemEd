@@ -1,11 +1,13 @@
 #include "doukmemed.h"
 #include "ui_doukmemed.h"
+#include <QWindow>
 #include <QMessageBox>
 #include <iostream>
 #include <string>
 #include <sstream>
 #include <stdint.h>
 #include <QTextStream>
+#include "doukmapview.h"
 #include "doukutsu.h"
 using namespace std;
 
@@ -92,13 +94,14 @@ void DoukMemEd::on_btnAttach_clicked()
             return;
         }
 
-        proc = nullptr;
+        // Note that proc starts out nullptr, and is only set if a t-candidate is OK.
+        // Failed t-candidates are immediately deleted.
         for (intptr_t ip : processes) {
-            proc = new LPA::Process(ip);
-            if ((proc->isValid()) && (proc->matchesNameTemplate(exeName))) {
-                cout << "Attempting attach to PID " << proc->getPID() << endl;
-                if (!proc->canBeginMemoryAccess()) {
-                    delete proc;
+            LPA::Process * t = new LPA::Process(this, ip);
+            if ((t->isValid()) && (t->matchesNameTemplate(exeName))) {
+                cout << "Attempting attach to PID " << t->getPID() << endl;
+                if (!t->canBeginMemoryAccess()) {
+                    delete t;
                     QMessageBox::critical(this, QString("Attach fail"), QString(
                         "The Cave Story process was found, but access to memory was not available.\n"
 #ifdef Q_OS_WIN
@@ -116,10 +119,10 @@ void DoukMemEd::on_btnAttach_clicked()
                         ));
                     return;
                 }
+                proc = t;
                 break;
             }
-            delete proc;
-            proc = nullptr;
+            delete t;
         }
 
         if (!proc) {
@@ -149,6 +152,7 @@ void DoukMemEd::on_btnAttach_clicked()
         ui->leExeName->setDisabled(true);
         ui->btnAttach->setText(QString("Detach"));
         ui->btnReadMem->setDisabled(false);
+        ui->btnShowMap->setDisabled(false);
         setWindowTitle(QString("Doukutsu Memory Editor [Attached]"));
         setWidgetsDisabled(false);
         on_btnReadMem_clicked();
@@ -157,6 +161,8 @@ void DoukMemEd::on_btnAttach_clicked()
 }
 
 void DoukMemEd::detach() {
+    // About to delete proc, inform dialogs that they need to close.
+    detached();
     if (proc)
         delete proc;
     proc = nullptr;
@@ -165,6 +171,7 @@ void DoukMemEd::detach() {
     ui->leExeName->setDisabled(false);
     ui->btnAttach->setText(QString("Attach"));
     ui->btnReadMem->setDisabled(true);
+    ui->btnShowMap->setDisabled(true);
     setWindowTitle(QString("Doukutsu Memory Editor"));
     setWidgetsDisabled(true);
 }
@@ -198,6 +205,7 @@ bool DoukMemEd::checkProcStillRunning() {
 void DoukMemEd::updateLocks() {
     if (!checkProcStillRunning())
         return;
+    timerRefresh();
     uint32_t dword = 9999;
     if (ui->cbLockHP->isChecked()) {
         uint16_t word = static_cast<uint16_t>(ui->sbCurHP->value());
@@ -284,6 +292,16 @@ void DoukMemEd::on_btnReadMem_clicked()
         getEquip(static_cast<uint32_t>(i), &b);
         cbEquips[i]->setChecked(b);
     }
+}
+
+void DoukMemEd::on_btnShowMap_clicked()
+{
+    if (!checkProcStillRunning())
+        return;
+
+    DoukMapView * dmv = new DoukMapView(this, this->proc);
+    // This is self-deleting once activated
+    dmv->show();
 }
 
 void DoukMemEd::on_sbMaxHP_valueChanged(int arg1)

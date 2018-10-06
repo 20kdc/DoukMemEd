@@ -14,7 +14,7 @@
 #include <iostream>
 using namespace std;
 
-LPA::Process::Process(intptr_t pidx) {
+LPA::Process::Process(QObject * parent, intptr_t pidx) : QObject(parent) {
     pid = pidx;
     handle = reinterpret_cast<intptr_t>(OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_VM_OPERATION | PROCESS_VM_WRITE, true, static_cast<DWORD>(pidx)));
     if (!handle) {

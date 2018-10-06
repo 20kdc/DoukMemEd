@@ -26,7 +26,8 @@ CONFIG += c++11
 
 SOURCES += \
         main.cpp \
-        doukmemed.cpp
+        doukmemed.cpp \
+    doukmapview.cpp
 
 win32: SOURCES += lpa_windows.cpp
 else: SOURCES += lpa_unix.cpp
@@ -34,7 +35,8 @@ else: SOURCES += lpa_unix.cpp
 HEADERS += \
         doukmemed.h \
         doukutsu.h \
-        lpa.h
+        lpa.h \
+    doukmapview.h
 
 FORMS += \
         doukmemed.ui

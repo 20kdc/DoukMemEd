@@ -129,7 +129,9 @@ void DoukMemEd::on_btnAttach_clicked()
             QMessageBox::critical(this, QString("Attach fail"), QString(
                 "Could not find Cave Story process.\n"
                 "Make sure Cave Story is running, and that its name is %1.\n"
+#ifdef Q_OS_WIN
                 "If it is running, it might be elevated. Run Doukutsu Memory Editor as an Administrator and try again."
+#endif
             ).arg(ui->leExeName->text()));
             return;
         }

@@ -29,13 +29,13 @@ SOURCES += \
         doukmemed.cpp \
     doukmapview.cpp
 
-win32: SOURCES += lpa_windows.cpp
-else: SOURCES += lpa_unix.cpp
+win32: SOURCES += lpa/lpa_windows.cpp
+else: SOURCES += lpa/lpa_unix.cpp
 
 HEADERS += \
         doukmemed.h \
         doukutsu.h \
-        lpa.h \
+        lpa/lpa.h \
     doukmapview.h
 
 FORMS += \

@@ -4,7 +4,7 @@
 #include <QTimer>
 #include <QCheckBox>
 #include "doukutsu.h"
-#include "lpa.h"
+#include "lpa/lpa.h"
 
 #define CB_EQUIPS_COUNT 16
 

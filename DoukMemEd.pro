@@ -27,7 +27,9 @@ CONFIG += c++11
 SOURCES += \
         main.cpp \
         doukmemed.cpp \
-    doukmapview.cpp
+        views/doukview.cpp \
+        views/doukmapview.cpp \
+    views/doukstatusview.cpp
 
 win32: SOURCES += lpa/lpa_windows.cpp
 else: SOURCES += lpa/lpa_unix.cpp
@@ -36,10 +38,13 @@ HEADERS += \
         doukmemed.h \
         doukutsu.h \
         lpa/lpa.h \
-    doukmapview.h
+        views/doukview.h \
+        views/doukmapview.h \
+    views/doukstatusview.h
 
 FORMS += \
-        doukmemed.ui
+        doukmemed.ui \
+    views/doukstatusview.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

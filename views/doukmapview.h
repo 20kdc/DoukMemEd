@@ -3,22 +3,21 @@
 
 #include <QWidget>
 #include "doukmemed.h"
+#include "views/doukview.h"
 
-class DoukMapView : public QWidget
+class DoukMapView : public DoukView
 {
     Q_OBJECT
 
 public:
-    explicit DoukMapView(DoukMemEd * target, LPA::Process * proc);
-    ~DoukMapView();
+    explicit DoukMapView(LPA::Process * proc);
+    virtual ~DoukMapView() override;
+    virtual void timerRefresh() override;
 
     virtual void paintEvent(QPaintEvent * paint) override;
     virtual void mousePressEvent(QMouseEvent * mouse) override;
     virtual void wheelEvent(QWheelEvent * wheel) override;
 
-private slots:
-    void detach();
-    void timerRefresh();
 private:
     // Cache for between timer refreshes
     int mapW, mapH;
@@ -26,8 +25,6 @@ private:
     uint8_t mapPXA[256];
 
     int smeOfs;
-
-    LPA::Process *proc;
 };
 
 #endif // DOUKMAPVIEW_H

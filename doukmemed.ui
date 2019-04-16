@@ -6,373 +6,68 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>501</width>
-    <height>300</height>
+    <width>300</width>
+    <height>49</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Doukutsu Memory Editor</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QWidget" name="layoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>481</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <layout class="QHBoxLayout" name="hAttachCtrl">
-     <item>
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>EXE Name:</string>
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item>
+     <layout class="QHBoxLayout" name="hAttachCtrl">
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>EXE Name:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="leExeName">
+        <property name="text">
+         <string>Doukutsu.exe</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnAttach">
+        <property name="text">
+         <string>Attach</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QWidget" name="vViews" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <property name="spacing">
+        <number>6</number>
        </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="leExeName">
-       <property name="text">
-        <string>Doukutsu.exe</string>
+       <property name="leftMargin">
+        <number>0</number>
        </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="btnAttach">
-       <property name="text">
-        <string>Attach</string>
+       <property name="topMargin">
+        <number>0</number>
        </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="btnReadMem">
-       <property name="enabled">
-        <bool>false</bool>
+       <property name="rightMargin">
+        <number>0</number>
        </property>
-       <property name="text">
-        <string>Read from Memory</string>
+       <property name="bottomMargin">
+        <number>0</number>
        </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QWidget" name="layoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>200</y>
-      <width>481</width>
-      <height>90</height>
-     </rect>
-    </property>
-    <layout class="QHBoxLayout" name="hEquips">
-     <item>
-      <layout class="QVBoxLayout" name="vEquips1">
-       <item>
-        <widget class="QCheckBox" name="cbEquip01">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="cbEquip02">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="cbEquip03">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="cbEquip04">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
       </layout>
-     </item>
-     <item>
-      <layout class="QVBoxLayout" name="vEquips2">
-       <item>
-        <widget class="QCheckBox" name="cbEquip05">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="cbEquip06">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="cbEquip07">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="cbEquip08">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QVBoxLayout" name="vEquips3">
-       <item>
-        <widget class="QCheckBox" name="cbEquip09">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="cbEquip10">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="cbEquip11">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="cbEquip12">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QVBoxLayout" name="vEquips4">
-       <item>
-        <widget class="QCheckBox" name="cbEquip13">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="cbEquip14">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="cbEquip15">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="cbEquip16">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QWidget" name="layoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>250</x>
-      <y>40</y>
-      <width>241</width>
-      <height>151</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="vLocks">
-     <item>
-      <widget class="QCheckBox" name="cbLockHP">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="text">
-        <string>Lock HP (uses Current HP value)</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="cbInfBoost">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="text">
-        <string>Infinite Booster Fuel</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="cbInfAmmo">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="text">
-        <string>Infinite Ammo</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QWidget" name="layoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>40</y>
-      <width>231</width>
-      <height>151</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="vHP">
-     <item>
-      <layout class="QHBoxLayout" name="hMaxHP">
-       <item>
-        <widget class="QLabel" name="lMaxHP">
-         <property name="text">
-          <string>Maximum HP:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QSpinBox" name="sbMaxHP">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="buttonSymbols">
-          <enum>QAbstractSpinBox::UpDownArrows</enum>
-         </property>
-         <property name="minimum">
-          <number>1</number>
-         </property>
-         <property name="maximum">
-          <number>9999</number>
-         </property>
-         <property name="displayIntegerBase">
-          <number>16</number>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="hCurHP">
-       <item>
-        <widget class="QLabel" name="lCurHP">
-         <property name="text">
-          <string>Current HP:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QSpinBox" name="sbCurHP">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="buttonSymbols">
-          <enum>QAbstractSpinBox::UpDownArrows</enum>
-         </property>
-         <property name="minimum">
-          <number>0</number>
-         </property>
-         <property name="maximum">
-          <number>9999</number>
-         </property>
-         <property name="displayIntegerBase">
-          <number>16</number>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
-        <widget class="QPushButton" name="btnShowMap">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string>Reposition Player...</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-    </layout>
-   </widget>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

@@ -2,27 +2,19 @@
 #include <QPainter>
 #include "doukmapview.h"
 
-// DoukMapView is refreshed every
-DoukMapView::DoukMapView(DoukMemEd * target, LPA::Process * pro) : QWidget()
+DoukMapView::DoukMapView(LPA::Process * pro) : DoukView(pro, "Player Position...")
 {
     mapW = 0;
     mapH = 0;
     mapData = nullptr;
     // Disable this by default
     smeOfs = -1;
-    proc = pro;
-    connect(target, &DoukMemEd::timerRefresh, this, &DoukMapView::timerRefresh);
-    connect(target, &DoukMemEd::detached, this, &DoukMapView::detach);
-    setAttribute(Qt::WA_DeleteOnClose);
     setCursor(QCursor(Qt::CrossCursor));
 
     setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
 }
 
 void DoukMapView::timerRefresh() {
-    if (!proc)
-        return;
-
     uint16_t words[2];
     uint32_t ptr;
     words[0] = 0;
@@ -143,25 +135,23 @@ void DoukMapView::paintEvent(QPaintEvent * paint) {
         }
     }
 
-    if (proc) {
-        int32_t playerX, playerY;
+    int32_t playerX, playerY;
 
-        proc->readMemory(Doukutsu::PlayerX, &playerX, sizeof(int32_t));
-        proc->readMemory(Doukutsu::PlayerY, &playerY, sizeof(int32_t));
+    proc->readMemory(Doukutsu::PlayerX, &playerX, sizeof(int32_t));
+    proc->readMemory(Doukutsu::PlayerY, &playerY, sizeof(int32_t));
 
-        playerX += 8 * 512;
-        playerY += 8 * 512;
+    playerX += 8 * 512;
+    playerY += 8 * 512;
 
-        QPainterPath leaRhombus;
-        leaRhombus.moveTo(-8, 0);
-        leaRhombus.lineTo(0, -8);
-        leaRhombus.lineTo(8, 0);
-        leaRhombus.lineTo(0, 8);
-        leaRhombus.lineTo(-8, 0);
-        leaRhombus.translate(playerX / 512, playerY / 512);
-        painter.setPen(QColor(255, 0, 0));
-        painter.drawPath(leaRhombus);
-    }
+    QPainterPath playerSymPath;
+    playerSymPath.moveTo(-8, 0);
+    playerSymPath.lineTo(0, -8);
+    playerSymPath.lineTo(8, 0);
+    playerSymPath.lineTo(0, 8);
+    playerSymPath.lineTo(-8, 0);
+    playerSymPath.translate(playerX / 512, playerY / 512);
+    painter.setPen(QColor(255, 0, 0));
+    painter.drawPath(playerSymPath);
 
     painter.end();
     paint->accept();
@@ -169,8 +159,6 @@ void DoukMapView::paintEvent(QPaintEvent * paint) {
 
 void DoukMapView::mousePressEvent(QMouseEvent * mouse)
 {
-    if (!proc)
-        return;
     Qt::MouseButton mb = mouse->button();
     if (mb == Qt::MouseButton::LeftButton) {
         int32_t playerX = (mouse->x() - 8) * 512;
@@ -182,8 +170,6 @@ void DoukMapView::mousePressEvent(QMouseEvent * mouse)
 }
 void DoukMapView::wheelEvent(QWheelEvent * wheel)
 {
-    if (!proc)
-        return;
     if (!(mapW && mapH))
         return;
     int x = wheel->x() / 16;
@@ -215,12 +201,6 @@ void DoukMapView::wheelEvent(QWheelEvent * wheel)
     proc->readMemory(Doukutsu::MapPtr, &ptr, sizeof(uint32_t));
     proc->writeMemory(ptr + ofs, mapData + ofs, 1);
     wheel->accept();
-}
-
-void DoukMapView::detach()
-{
-    proc = nullptr;
-    close();
 }
 
 DoukMapView::~DoukMapView()

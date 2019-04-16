@@ -1,4 +1,5 @@
-#pragma once
+#ifndef DOUKUTSU_H
+#define DOUKUTSU_H
 
 #include <stdint.h>
 
@@ -65,3 +66,4 @@ namespace Doukutsu {
     };
 
 }
+#endif

@@ -10,6 +10,7 @@
 #include "views/doukview.h"
 #include "views/doukmapview.h"
 #include "views/doukstatusview.h"
+#include "views/douknpcview.h"
 #include "doukutsu.h"
 using namespace std;
 
@@ -118,6 +119,7 @@ void DoukMemEd::on_btnAttach_clicked()
         // -- Install All Views
         views.append(new DoukMapView(proc));
         views.append(new DoukStatusView(proc));
+        views.append(new DoukNPCView(proc));
         for (DoukView * dv : views) {
             QPushButton * pb = new QPushButton(dv->buttonName);
             connect(pb, &QPushButton::clicked, dv, &DoukView::show);

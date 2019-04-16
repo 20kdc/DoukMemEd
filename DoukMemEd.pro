@@ -29,7 +29,8 @@ SOURCES += \
         doukmemed.cpp \
         views/doukview.cpp \
         views/doukmapview.cpp \
-    views/doukstatusview.cpp
+    views/doukstatusview.cpp \
+    views/douknpcview.cpp
 
 win32: SOURCES += lpa/lpa_windows.cpp
 else: SOURCES += lpa/lpa_unix.cpp
@@ -40,11 +41,13 @@ HEADERS += \
         lpa/lpa.h \
         views/doukview.h \
         views/doukmapview.h \
-    views/doukstatusview.h
+    views/doukstatusview.h \
+    views/douknpcview.h
 
 FORMS += \
         doukmemed.ui \
-    views/doukstatusview.ui
+    views/doukstatusview.ui \
+    views/douknpcview.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

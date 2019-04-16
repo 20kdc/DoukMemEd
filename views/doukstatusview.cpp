@@ -112,6 +112,21 @@ void DoukStatusView::timerRefresh()
         wpn.ammo = wpn.ammoMax;
         setWeapon(slot, &wpn);
     }
+
+    int32_t px, py, vx, vy;
+    proc->readMemory(Doukutsu::PlayerX, &px, sizeof(int32_t));
+    proc->readMemory(Doukutsu::PlayerY, &py, sizeof(int32_t));
+    proc->readMemory(Doukutsu::PlayerXV, &vx, sizeof(int32_t));
+    proc->readMemory(Doukutsu::PlayerYV, &vy, sizeof(int32_t));
+
+    QString ppc = "Player Position (Complex):\n";
+    ppc += "X: " + QString::number(px >> 13) + "\n";
+    ppc += "Y: " + QString::number(py >> 13) + "\n";
+    ppc += "Xv: " + QString::number(vx) + "\n";
+    ppc += "Yv: " + QString::number(vy) + "\n";
+    ppc += "Xf: " + QString::number(px % 0x1FFF) + "\n";
+    ppc += "Yf: " + QString::number(py % 0x1FFF) + "\n";
+    ui->lblPlayerPosComplex->setText(ppc);
 }
 
 void DoukStatusView::on_btnReadMem_clicked()

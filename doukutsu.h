@@ -127,10 +127,8 @@ namespace Doukutsu {
         MapPXA = off(0x49E484),
         // NPC[0x200] : first element in NPC array
         NPCsStart = off(0x4A6220),
-        // Bullet[???] : first element in bullet array
-        //BulletsStart = off(???),
-        // ...I don't know where it is, or how many it stores
-        // ask in the CSMC
+        // Bullet[0x40] : first element in bullet array
+        BulletsStart = off(0x499C98),
 
         // a message to 20kdc:
         // DON'T USE THIS ENUM FOR NON-OFFSETS!!!

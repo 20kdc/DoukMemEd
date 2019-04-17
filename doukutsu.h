@@ -81,7 +81,7 @@ namespace Doukutsu {
     #define off(addr) static_cast<quint32>((addr))
     // MEMORY OFFSETS
     // from http://cave-story-modding.wikia.com/wiki/Noxid's_Assembly_Compendium
-        enum Offsets : quint32 {
+    enum Offsets : quint32 {
         // quint8[5] : is 0xA1, 0x20, 0x8B, 0x49, 0x00 in Doukutsu.exe
         VerifyExe = off(0x412429),
         // quint32[0x20] : first element in item array

@@ -65,7 +65,7 @@ bool LPA::Process::matchesNameTemplate(QString post) {
     return answer;
 }
 
-bool LPA::Process::canBeginMemoryAccess() {
+bool LPA::Process::tryBeginMemoryAccess() {
     if (handle2 < 0)
         handle2 = openat(static_cast<int>(handle), "mem", O_RDWR);
     return handle2 >= 0;

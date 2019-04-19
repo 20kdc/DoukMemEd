@@ -14,9 +14,13 @@
 #include <iostream>
 using namespace std;
 
+// handle2 is "have read/write permission" flag
+#define hasIOAccess handle2
+
 LPA::Process::Process(QObject * parent, intptr_t pidx) : QObject(parent) {
     pid = pidx;
-    handle = reinterpret_cast<intptr_t>(OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_VM_OPERATION | PROCESS_VM_WRITE, true, static_cast<DWORD>(pidx)));
+    handle = reinterpret_cast<intptr_t>(OpenProcess(PROCESS_QUERY_INFORMATION, true, static_cast<DWORD>(pidx)));
+	hasIOAccess = false;
     if (!handle) {
         // Handle was uncreatable, object is invalid.
         valid = false;
@@ -55,7 +59,21 @@ bool LPA::Process::matchesNameTemplate(QString post) {
     return false;
 }
 
-bool LPA::Process::canBeginMemoryAccess() {
+bool LPA::Process::tryBeginMemoryAccess() {
+    if (!hasIOAccess) {
+        // close current handle
+        CloseHandle(reinterpret_cast<HANDLE>(handle));
+        // reopen it with read/write permissions
+        handle = reinterpret_cast<intptr_t>(OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_VM_OPERATION | PROCESS_VM_WRITE, true, static_cast<DWORD>(pid)));
+        if (!handle) {
+            // Handle was uncreatable, object is invalid.
+            valid = false;
+            return false;
+        } else {
+            valid = true;
+        }
+        hasIOAccess = true;
+    }
     return true;
 }
 

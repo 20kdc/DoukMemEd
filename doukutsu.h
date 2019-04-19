@@ -48,7 +48,7 @@ namespace Doukutsu {
         qint32 inuse;
         qint32 collision;
         qint32 x, y;
-        qint32 movey, movey;
+        qint32 movex, movey;
         qint32 altvelx,altvely;
         qint32 CurlyMacro1, CurlyMacro2;
         qint32 npcType, entityID;

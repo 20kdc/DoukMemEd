@@ -55,6 +55,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 win32: LIBS += -lpsapi
+# Just in case.
+win32: DEFINES += PSAPI_VERSION=1
 
 data.path = $$OUT_PWD
 data.files = \

@@ -1,9 +1,8 @@
-#define LEA_WINDOWS_MAX_PROCESSES 8192
-
 #include <string>
 #include "lpa.h"
 
-// Use for checking compilability
+// Use for checking compilability. Do not commit with the 'wine' section active.
+
 //#include <wine/windows/windows.h>
 //#include <wine/windows/psapi.h>
 //#include <wine/windows/winbase.h>
@@ -11,6 +10,7 @@
 #include <Windows.h>
 #include <Psapi.h>
 #include <WinBase.h>
+
 #include <iostream>
 using namespace std;
 
@@ -55,7 +55,7 @@ bool LPA::Process::matchesNameTemplate(QString post) {
     return false;
 }
 
-bool LPA::Process::canBeginMemoryAccess() {
+bool LPA::Process::beginMemoryAccessOrInvalidate() {
     return true;
 }
 
@@ -68,17 +68,25 @@ void LPA::Process::writeMemory(uint32_t address, void * res, size_t ressz) {
 }
 
 bool LPA::getProcesses(QList<intptr_t> & processes) {
-    DWORD pids[LEA_WINDOWS_MAX_PROCESSES];
-    DWORD szRet;
-    if(!EnumProcesses(pids, sizeof(pids), &szRet))
-        return false;
-    DWORD * ptr = pids;
-    while (szRet) {
-        processes.append(*ptr);
-        ptr++;
-        szRet -= 4;
+    size_t power = 1024;
+    while (true) {
+        size_t total = sizeof(DWORD) * power;
+        DWORD pids[power];
+        DWORD szRet;
+        if (!EnumProcesses(pids, total, &szRet))
+            return false;
+        if (szRet != total) {
+            DWORD * ptr = pids;
+            while (szRet) {
+                processes.append(*ptr);
+                ptr++;
+                szRet -= sizeof(DWORD);
+            }
+            return true;
+        }
+        // More processes.
+        power *= 2;
     }
-    return true;
 }
 
 unsigned int LPA::getLastError() {

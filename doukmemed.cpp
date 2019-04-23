@@ -27,7 +27,8 @@ DoukMemEd::DoukMemEd(QWidget *parent) :
 
 DoukMemEd::~DoukMemEd()
 {
-    detach();
+    if (proc)
+        detach();
     delete ui;
 }
 
@@ -64,7 +65,7 @@ void DoukMemEd::on_btnAttach_clicked()
             LPA::Process * t = new LPA::Process(this, ip);
             if ((t->isValid()) && (t->matchesNameTemplate(exeName))) {
                 cout << "Attempting attach to PID " << t->getPID() << endl;
-                if (!t->canBeginMemoryAccess()) {
+                if (!t->beginMemoryAccessOrInvalidate()) {
                     delete t;
                     QMessageBox::critical(this, QString("Attach fail"), QString(
                         "The Cave Story process was found, but access to memory was not available.\n"

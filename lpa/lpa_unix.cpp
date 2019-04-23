@@ -65,10 +65,15 @@ bool LPA::Process::matchesNameTemplate(QString post) {
     return answer;
 }
 
-bool LPA::Process::canBeginMemoryAccess() {
+bool LPA::Process::beginMemoryAccessOrInvalidate() {
     if (handle2 < 0)
         handle2 = openat(static_cast<int>(handle), "mem", O_RDWR);
-    return handle2 >= 0;
+    if (handle2 < 0) {
+        close(static_cast<int>(handle));
+        valid = false;
+        return false;
+    }
+    return true;
 }
 
 void LPA::Process::readMemory(uint32_t address, void * res, size_t ressz) {

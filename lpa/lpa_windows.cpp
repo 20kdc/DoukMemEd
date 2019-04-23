@@ -20,7 +20,7 @@ using namespace std;
 LPA::Process::Process(QObject * parent, intptr_t pidx) : QObject(parent) {
     pid = pidx;
     handle = reinterpret_cast<intptr_t>(OpenProcess(PROCESS_QUERY_INFORMATION, true, static_cast<DWORD>(pidx)));
-	hasIOAccess = false;
+    hasIOAccess = false;
     if (!handle) {
         // Handle was uncreatable, object is invalid.
         valid = false;
